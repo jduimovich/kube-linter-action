@@ -7,6 +7,9 @@ inputs:
   config:
     description: 'Path to config file'
     required: false
+  outputFile:
+    description: 'Path to sarif output of scan, note raw output will be in a file called kubelinter.raw-output'
+    required: false 
 outputs:
   lint-txt:
     description: 'Output from linting'
@@ -30,6 +33,13 @@ runs:
         else
           export CONFIG="--config ${{ inputs.config }}"
         fi
-        ./kube-linter $CONFIG lint ${{ inputs.directory }}
+        ./kube-linter $CONFIG lint ${{ inputs.directory }}  2>&1 >/dev/null | tee kubelinter.raw-output || true
+        if [ -z ${{ inputs.outputFile }} ]; then
+          cat kubelinter.raw-output
+        else
+          cat kubelinter.raw-output
+          curl -s -L -o https://raw.githubusercontent.com/jduimovich/kubelinter-sarif-poc/main/kubelinter2sarif.js
+          node kubelinter2sarif kubelinter.raw-output ${{ inputs.outputFile }}
+        fi
       shell: bash
 

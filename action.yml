@@ -38,8 +38,8 @@ runs:
           cat kubelinter.raw-output
         else
           cat kubelinter.raw-output
-          curl -s -L -o https://raw.githubusercontent.com/jduimovich/kubelinter-sarif-poc/main/kubelinter2sarif.js
-          node kubelinter2sarif kubelinter.raw-output ${{ inputs.outputFile }}
+          curl -s -L -o kubelinter2sarif.js https://raw.githubusercontent.com/jduimovich/kubelinter-sarif-poc/main/kubelinter2sarif.js
+          node kubelinter2sarif.js kubelinter.raw-output ${{ inputs.outputFile }}
         fi
       shell: bash
 
